@@ -1,0 +1,199 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-10-26"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r}
+`
+
+```{r}
+
+View(tripdata)
+```
+Remove missing valuses
+```{r}
+colSums(is.na(tripdata))
+```
+
+```{r}
+new_tripdata <- na.omit(tripdata)
+```
+
+```{r}
+view(new_tripdata)
+```
+
+
+
+
+```{r}
+sum(duplicated(new_tripdata))
+```
+
+Remove duplicaten/empty rows
+```{r}
+new_tripdata[duplicated(new_tripdata),]
+```
+
+
+
+
+remove additional column
+```{r}
+new_tripdata$ride_id <- NULL
+new_tripdata$start_station_id <- NULL
+new_tripdata$end_station_id <- NULL
+```
+
+```{r}
+new_tripdata$started_at <- as.POSIXct(new_tripdata$started_at, format = "%d/%m/%Y %H:%M")
+new_tripdata$ended_at <- as.POSIXct(new_tripdata$ended_at, format = "%d/%m/%Y %H:%M")
+
+head(new_tripdata)
+```
+
+```{r}
+new_tripdata$Hour <- hour(new_tripdata$started_at)
+
+new_tripdata$Day <- day(new_tripdata$started_at)
+
+new_tripdata$Month <-month(new_tripdata$started_at)
+
+new_tripdata$Year <- year(new_tripdata$started_at)
+
+head(new_tripdata)
+```
+
+What is the overall distribution of users?
+
+```{r}
+user_distribution_plot <- ggplot(new_tripdata, aes(x = "member_causal")) +
+  geom_bar() +
+  labs(
+    title = "Distribution of Users in Divvy System",
+    x = "member_casual",
+    y = "Count",
+    bins = 2
+  )
+user_distribution_plot
+```
+
+• What is the average number of bike trips per user category?
+```{r}
+average_trips_per_user <- new_tripdata %>%
+  group_by(member_casual) %>%
+  summarize(Avg_Trips = mean(Hour))
+
+print(average_trips_per_user)
+
+
+```
+
+What is the most common bike trip length?
+
+```{r}
+top_5_longest_rides <- new_tripdata %>%
+  arrange(desc(Hour)) %>%  # Sort by Trip_Length in descending order
+  head(5)  # Get the top 5 rows
+
+# View the top 5 longest rides
+print(top_5_longest_rides)
+```j
+
+
+
+```{r}
+
+trip_length_histogram <- ggplot(new_tripdata, aes(x = "Started_at")) +
+  geom_histogram(stat="count", fill = "blue", color = "black") +
+  labs(
+    title = "Distribution of Bike Trip Length",
+    x = "ended_at",
+    y = "frequency",
+    
+  )
+print(trip_length_histogram)
+```
+
+
+
+
+```{r}
+# Create a Plotly bar chart
+plotly_bar_chart <- plot_ly(top_5_longest_rides, x = ~started_at, y = ~rownames(top_5_longest_rides), type = "bar", orientation = "h") %>%
+  layout(
+    title = "Top 5 Longest Bike Ride Lengths",
+    xaxis = list(title = "started_at"),
+    yaxis = list(title = "ended_at"),
+    showlegend = FALSE
+  )
+print(plotly_bar_chart)
+
+```
+
+
+
+
+timeseries
+
+What is the average number of bike trips per user category?
+ What is the most common bike trip length?
+ What is the range of bike trip length
+ Ride distribution by user type and day of week.using time series
+• Ride distribution by time of day.using time series
+• The most popular usage time e.g. hour, month, day, season etc.
+• Ride distribution by month.
+
+with visualiztion
+
+Number of Stations
+• Station Analysis i.e. Most and least popular stations per user status
+(Casual Customer and Subscriber).
+• The top 10 most visited stations by subscriber riders aggregated by
+"Number of trips" and "Station name".
+• The top 10 most visited stations by casual riders  aggregated by "Number 
+of trips" and "Station name
+
+Geographic Distribution
+
+: Perform geographic distribution of ride
+requests using longitude and latitude.
+• Spatial Clustering: Perform spatial clustering analysis to identify regions
+with high bike ride activity. This can help in identifying areas where
+additional bike-sharing infrastructure may be needed
+
+• Analyze the difference in ride duration between the two groups using
+ANOVA (Analysis of Variance Statistical Test).
+• Report on Findings.
+
+
+
+
+
+
